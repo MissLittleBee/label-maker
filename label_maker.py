@@ -1,4 +1,5 @@
 import textwrap
+from pathlib import Path
 
 from config import setup_logging
 
@@ -24,11 +25,20 @@ def main():
         )
     )
     parser.add_argument(
-        "data_input",
+        "data-input",
         choices=["file", "user"],
         default="file",
         const="file",
         nargs="?",
+
+    )
+    parser.add_argument(
+        "path-file",
+        type=Path,
+        default="input/sample_data.csv",
+        nargs="?",
+        const="input/sample_data.csv",
+        help="Specifikace cesty k souboru s importovatelnými daty, výchozí: %(default)s)"
 
     )
     args = parser.parse_args()
@@ -37,7 +47,7 @@ def main():
     data_input = args.data_input
 
     if data_input == "file":
-        file_path = "input/sample_data.csv"
+        file_path = args.path_file
         data = csv_input(file_path)
 
     elif data_input == "user":
