@@ -23,10 +23,18 @@ def main():
             "Lze importovat data z csv nebo od uživatele"
         )
     )
+    parser.add_argument(
+        "data_input",
+        choices=["file", "user"],
+        default="file",
+        const="file",
+        nargs="?",
+
+    )
     args = parser.parse_args()
 
     data = []
-    data_input = "file"
+    data_input = args.data_input
 
     if data_input == "file":
         file_path = "input/sample_data.csv"
