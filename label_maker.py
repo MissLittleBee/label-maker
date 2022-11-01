@@ -1,7 +1,10 @@
+import textwrap
+
 from config import setup_logging
 
 setup_logging()
 import logging
+import argparse
 
 from calc import calculate_unit_price
 from inputs import csv_input
@@ -13,7 +16,14 @@ log = logging.getLogger(__name__)
 
 def main():
     log.info(' program start '.center(80, '-'))
-    # TODO: vyměnit za argument od argparse
+
+    parser = argparse.ArgumentParser(
+        description=textwrap.dedent(
+            "Label Maker - program pro výrobu cenovek s přepočtem na objemové/hmotnostní jednotky."
+            "Lze importovat data z csv nebo od uživatele"
+        )
+    )
+    args = parser.parse_args()
 
     data = []
     data_input = "file"
