@@ -113,10 +113,10 @@ def user_input():
             return entries
 
 
-def csv_input():
+def csv_input(file_path):
     """Load data from csv."""
     log.info('loading data from csv file')
-    with open('input/sample_data.csv', encoding='UTF-8') as file:
+    with open(file_path, encoding='UTF-8') as file:
         reader = csv.DictReader(file, quoting=csv.QUOTE_NONNUMERIC)
         data = list(reader)
     for item in data:
