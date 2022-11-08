@@ -1,11 +1,7 @@
+import argparse
+import logging
 import textwrap
 from pathlib import Path
-
-from config import setup_logging
-
-setup_logging()
-import logging
-import argparse
 
 from calc import calculate_unit_price
 from inputs import csv_input
@@ -15,9 +11,8 @@ from outputs import to_word
 log = logging.getLogger(__name__)
 
 
-def main():
-    log.info(' program start '.center(80, '-'))
-
+def cli_main(args):
+    log.info("Mód CLI")
     parser = argparse.ArgumentParser(
         description=textwrap.dedent(
             "Label Maker - program pro výrobu cenovek s přepočtem na objemové/hmotnostní jednotky."
@@ -41,7 +36,7 @@ def main():
         help="Specifikace cesty k souboru s importovatelnými daty, výchozí: %(default)s)"
 
     )
-    args = parser.parse_args()
+    args = parser.parse_args(args)
 
     data = []
     data_input = args.data_input
@@ -60,7 +55,3 @@ def main():
     calculated_data = calculate_unit_price(data)
     to_word(calculated_data, 'templates/labels_template.docx')
     log.info(' program end '.center(80, '-'))
-
-
-if __name__ == '__main__':
-    main()
