@@ -15,7 +15,7 @@ log = logging.getLogger(__name__)
 def main():
     args = sys.argv[1:]
     if args:
-        cli_main()
+        cli_main(args)
     else:
         gui_main()
 
