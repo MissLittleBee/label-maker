@@ -100,9 +100,9 @@ def user_input():
     entries = []
     while True:
         item = {
-            'name'       : better_input('Název', str),
-            'form'       : better_input('Forma', str, valid_options=VALID_FORMS.keys()),
-            'quantity'   : better_input('Počet', int),
+            'name': better_input('Název', str),
+            'form': better_input('Forma', str, valid_options=VALID_FORMS.keys()),
+            'quantity': better_input('Počet jednotek', int),
             'total_price': better_input('Celková cena', positive_float),
         }
         item["unit"] = VALID_FORMS.get(item["form"], "")
@@ -113,10 +113,10 @@ def user_input():
             return entries
 
 
-def csv_input():
+def csv_input(file_path):
     """Load data from csv."""
     log.info('loading data from csv file')
-    with open('input/sample_data.csv', encoding='UTF-8') as file:
+    with open(file_path, encoding='UTF-8') as file:
         reader = csv.DictReader(file, quoting=csv.QUOTE_NONNUMERIC)
         data = list(reader)
     for item in data:
