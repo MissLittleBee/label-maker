@@ -2,6 +2,8 @@ import logging
 
 import PySimpleGUI as sg
 
+from inputs import VALID_FORMS
+
 log = logging.getLogger(__name__)
 
 
@@ -35,7 +37,7 @@ class GUIApp:
             event, values = self.window.read()
             log.debug((event, values))
 
-            if event == sg.WIN_CLOSED:  # always,  always give a way out!
+            if event == sg., "Exit":
                 break
 
             # do actions
@@ -46,12 +48,42 @@ class GUIApp:
                 log.exception('unknown event')
 
     def create_window(self):
-        layout = [[sg.Text('Some text on Row 1')],
-                  [sg.Text('Enter something on Row 2'), sg.InputText()],
-                  [sg.Button('Ok'), sg.Button('Cancel')]]
+        sg.theme('Black')
+        layout = [
+                [sg.Text('Vítejte v programu LabelMaker. Vyberte prosím vstupní data pro tvorbu cenovek:')],
+                [sg.Tab('Zadání hodnot uživatelem', [[#připravený layout]]), sg.Tab('Import z CSV', [[#připravený layout]]),
+                [sg.Exit()]
+                ]
+
+
+        #layout pro zadání uživatelem --> rozbalí se po zakliknutí buttonu nebo záložky "Zadání hodnot uživatelem"§
+        # Jak převedu input do slovníku k tvorbě cenovek? key -IN-
+        layout_user_input = [
+                [sg.Text("Jméno produktu:")],[sg.InputText()],
+                #našeptávání formy podle zadaného prvního písmena: "e" --> všechny lékové formy od "e"
+                #[sg.Text("Léková forma:")], [sg.Combo(VALID_FORMS.keys())], #nefunguje - proč nebere keys ze slovníku jako nabídku možností v combo?
+                [sg.Text("Množství jednotek v balení ")],[sg.InputText()],
+                [sg.Text("Cena produktu:")], [sg.InputText()],
+                [sg.Button("Uložit hodnoty a pokračovat"),sg.Button("Uložit a vytvořit cenovky")],
+
+                [sg.Output(size=(50,10))] #pole pro vypsání zadaných hodnot uživatelem
+                ]
+        #layout pro input z .csv
+        layout_csv_input = [
+                [sg.Text("Vybrat soubor .CSV") sg.Input(key= "-IN-CSV"), sg.FileBrowse(file_types=("*.csv*")],
+                [],
+        ]
+
+
+
+"""sg.Window("název", layout)
+    event, values = window.read()
+    window.close()"
+    
+    *označení cedulek, které potřebují edistovat kvůli překlepu, případně rovnouo možnst editovat""
 
         # Create the Window
-        return sg.Window('Window Title', layout)
+        return sg.Window('LabelMaker pro lékárnu', layout)
 
 
 def gui_main():
