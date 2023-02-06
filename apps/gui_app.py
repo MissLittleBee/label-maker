@@ -99,8 +99,10 @@ class GUIApp:
         self.user_labels.append(item)
 
     def generate_labels(self, values):
-
-        calculated_data = calculate_unit_price(self.user_labels)
+        data= []
+        data.extend(self.user_labels)  # načteno od uživatele
+        # data.extend(...)  # data načtená z .csv
+        calculated_data = calculate_unit_price(data)
         to_word(calculated_data, 'templates/labels_template.docx')
 
 def gui_main():
