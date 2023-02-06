@@ -2,7 +2,9 @@ import logging
 
 import PySimpleGUI as sg
 
+from calc import calculate_unit_price
 from inputs import VALID_FORMS
+from outputs import to_word
 
 log = logging.getLogger(__name__)
 
@@ -13,6 +15,9 @@ class GUIApp:
         self.in_files = []
         self.user_labels = []
         self.event_to_action = {
+            "-ADD-": self.add_user_label,
+            "-CREATE-": self.generate_labels,
+
         }
 
     def __enter__(self):
@@ -51,11 +56,11 @@ class GUIApp:
 
         def _user_tab():
             layout_user_input = [
-                [sg.Text("Jméno produktu:")], [sg.InputText()],
-                # našeptávání formy podle zadaného prvního písmena: "e" --> všechny lékové formy od "e"
-                [sg.Text("Léková forma:")], [sg.Combo(list(VALID_FORMS.keys()))],
-                [sg.Text("Množství jednotek v balení ")], [sg.InputText()],
-                [sg.Text("Cena produktu:")], [sg.InputText()],
+                [sg.Text("Jméno produktu:")], [sg.InputText(key="name")],
+                [sg.Text("Léková forma:")], [sg.Combo(key="form", values=sorted(VALID_FORMS.keys()))],
+                [sg.Text("Množství jednotek v balení ")], [sg.InputText(key="quantity")],
+                [sg.Text("Cena produktu:")], [sg.InputText(key="price")],
+                [sg.Button("Další položka", key="-ADD-"), sg.Button("Vymazat", key="-CLEAR-")]
             ]
             return layout_user_input
 
@@ -82,6 +87,21 @@ class GUIApp:
         # Create the Window
         return sg.Window('LabelMaker pro lékárnu', layout)
 
+    def add_user_label(self, values):
+
+        item = {
+            "name": values["name"],
+            "form": values["form"],
+            "quantity": int(values["quantity"]),
+            "total_price": int(values["price"]),
+        }
+        item["unit"] = VALID_FORMS.get(item["form"], "")
+        self.user_labels.append(item)
+
+    def generate_labels(self, values):
+
+        calculated_data = calculate_unit_price(self.user_labels)
+        to_word(calculated_data, 'templates/labels_template.docx')
 
 def gui_main():
     log.info("Mód GUI")
