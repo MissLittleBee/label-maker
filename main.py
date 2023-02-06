@@ -4,8 +4,8 @@ from config import setup_logging
 
 setup_logging()
 
-from gui_app import gui_main
-from cli_app import cli_main
+from apps.gui_app import gui_main
+from apps.cli_app import cli_main
 
 import logging
 
