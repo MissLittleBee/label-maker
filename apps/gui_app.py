@@ -56,10 +56,10 @@ class GUIApp:
 
         def _user_tab():
             layout_user_input = [
-                [sg.Text("Jméno produktu:")], [sg.InputText(key="name")],
+                [sg.Text("Jméno produktu:")], [sg.InputText(key="name", do_not_clear=False)],
                 [sg.Text("Léková forma:")], [sg.Combo(key="form", values=sorted(VALID_FORMS.keys()))],
-                [sg.Text("Množství jednotek v balení ")], [sg.InputText(key="quantity")],
-                [sg.Text("Cena produktu:")], [sg.InputText(key="price")],
+                [sg.Text("Množství jednotek v balení ")], [sg.InputText(key="quantity", do_not_clear=False)],
+                [sg.Text("Cena produktu:")], [sg.InputText(key="price", do_not_clear=False)],
                 [sg.Button("Další položka", key="-ADD-"), sg.Button("Vymazat", key="-CLEAR-")]
             ]
             return layout_user_input
