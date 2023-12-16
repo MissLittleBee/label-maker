@@ -15,7 +15,7 @@ Uživatel zadá potřebné hodnoty, výsupem je pak tisknutelný soubor připrav
 
 ## Instalace
 
-Momentálně je aplikace ve formě spustitelného python scriptu. Je tak potřeba mýt nainstalovaný python ve verzi 3.6 a
+Momentálně je aplikace ve formě spustitelného python scriptu. Je tak potřeba mít nainstalovaný python ve verzi 3.6 a
 větší.  
 Pro instalaci je také doporučeno použít virtuální prostředí, například vestavěné `venv`.
 
