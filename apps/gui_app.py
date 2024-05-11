@@ -17,7 +17,7 @@ class GUIApp:
         self.event_to_action = {
             "-ADD-": self.add_user_label,
             "-CREATE-": self.generate_labels,
-
+            '-EDIT_LAST_LABEL-': self.edit_label,
         }
 
     def __enter__(self):
@@ -56,11 +56,11 @@ class GUIApp:
 
         def _user_tab():
             layout_user_input = [
-                [sg.Text("Jméno produktu:")], [sg.InputText(key="name", do_not_clear=False)],
+                [sg.Text("Jméno produktu:")], [sg.InputText('', key="name")],
                 [sg.Text("Léková forma:")], [sg.Combo(key="form", values=sorted(VALID_FORMS.keys()))],
-                [sg.Text("Množství jednotek v balení ")], [sg.InputText(key="quantity", do_not_clear=False)],
-                [sg.Text("Cena produktu:")], [sg.InputText(key="price", do_not_clear=False)],
-                [sg.Button("Další položka", key="-ADD-"), sg.Button("Vymazat", key="-CLEAR-")]
+                [sg.Text("Množství jednotek v balení ")], [sg.InputText(key="quantity")],
+                [sg.Text("Cena produktu:")], [sg.InputText(key="price")],
+                [sg.Button("Další položka", key="-ADD-"), sg.Button("Vymazat", key="-CLEAR-"), sg.Button('Oprava poslední cedulky', key='-EDIT_LAST_LABEL-'), sg.Text("Celkový počet cenovek: "), sg.Text('0', key='-label_count-')]
             ]
             return layout_user_input
 
@@ -70,6 +70,7 @@ class GUIApp:
                 [],
             ]
             return layout_csv_input
+
 
         sg.theme('Black')
 
@@ -88,22 +89,60 @@ class GUIApp:
         return sg.Window('LabelMaker pro lékárnu', layout)
 
     def add_user_label(self, values):
-
-        item = {
-            "name": values["name"],
-            "form": values["form"],
-            "quantity": int(values["quantity"]),
-            "total_price": int(values["price"]),
-        }
-        item["unit"] = VALID_FORMS.get(item["form"], "")
-        self.user_labels.append(item)
+        try:
+            item = {
+                "name": values["name"],
+                "form": values["form"],
+                "quantity": float(values["quantity"]),
+                "total_price": float(values["price"]),
+            }
+            item["unit"] = VALID_FORMS[item["form"]]
+        except KeyError:
+            log.warning('Špatný vstup.')
+            sg.popup_error('Vyber lékovou formu ze seznamu.', title='Warning')
+        except ValueError:
+            log.warning('Špatný vstup.')
+            sg.popup_error('Zadej číslo.', title='Warning')
+        else:
+            self.user_labels.append(item)
+            self._increment_count()
+            self._clear_input_fields()
 
     def generate_labels(self, values):
-        data= []
+        data = []
         data.extend(self.user_labels)  # načteno od uživatele
         # data.extend(...)  # data načtená z .csv
         calculated_data = calculate_unit_price(data)
         to_word(calculated_data, 'templates/labels_template.docx')
+
+    def edit_label(self, values):
+        # remove the last added label
+        last_label = self.user_labels.pop()
+        log.info(last_label)
+        self._decrement_count()
+
+        # rename the key total_price --> price
+        last_label['price'] = last_label.pop('total_price')
+        last_label.pop('unit')
+
+        # vepsat její data do polí
+        for key, value in last_label.items():
+            log.info(f'setting {key} to {value}')
+            self.window[key].update(value=str(value))
+
+    def _increment_count(self):
+        count = int(self.window['-label_count-'].DisplayText)
+        count += 1
+        self.window['-label_count-'].update(str(count))
+
+    def _decrement_count(self):
+        count = int(self.window['-label_count-'].DisplayText)
+        count -= 1
+        self.window['-label_count-'].update(str(count))
+
+    def _clear_input_fields(self):
+        for field_key in ('name', 'quantity', 'price'):
+            self.window[field_key].update('')
 
 def gui_main():
     log.info("Mód GUI")

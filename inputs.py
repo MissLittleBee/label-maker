@@ -25,6 +25,8 @@ Example of output:
 """
 import csv
 import logging
+import PySimpleGUI as sg
+
 
 log = logging.getLogger(__name__)
 
@@ -75,17 +77,16 @@ def better_input(question, value_type, valid_options=None):
             answer = value_type(input(f'{question}{valid_options if valid_options is not None else ""}: '))
 
             if valid_options and answer not in valid_options:
-                raise ValueError('neni z povolených hodnot')
+                raise ValueError('Není z povolených hodnot')
 
             if not answer:
                 raise ValueError('Nepovolujeme prázné hodnoty a nuly.')
 
-        except ValueError:
-            print('Špatně zadaná hodnota')
-
-        else:
             return answer
 
+        except ValueError as e:
+            sg.popup_error(str(e))
+            continue
 
 def user_input():
     """Take input from user.
@@ -104,7 +105,7 @@ def user_input():
         item = {
             'name': better_input('Název', str),
             'form': better_input('Forma', str, valid_options=VALID_FORMS.keys()),
-            'quantity': better_input('Počet jednotek', int),
+            'quantity': better_input('Počet jednotek', float),
             'total_price': better_input('Celková cena', positive_float),
         }
         item["unit"] = VALID_FORMS.get(item["form"], "")
