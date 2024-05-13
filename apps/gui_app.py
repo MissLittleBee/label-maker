@@ -116,9 +116,13 @@ class GUIApp:
         to_word(calculated_data, 'templates/labels_template.docx')
 
     def edit_label(self, values):
+
+        if len(self.user_labels) == 0:
+            # no labels to edit
+            return
+
         # remove the last added label
         last_label = self.user_labels.pop()
-        log.info(last_label)
         self._decrement_count()
 
         # rename the key total_price --> price
